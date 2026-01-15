@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { Logo } from "../Logo";
 import { Button } from "../ui/button";
@@ -20,6 +20,7 @@ export function OnboardingDetailsScreen({ onNavigate }: OnboardingDetailsScreenP
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [businessType, setBusinessType] = useState("");
+  const [customBusinessType, setCustomBusinessType] = useState("");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -107,7 +108,12 @@ export function OnboardingDetailsScreen({ onNavigate }: OnboardingDetailsScreenP
 
             <div className="space-y-2">
               <Label htmlFor="businessType">Business type</Label>
-              <Select value={businessType} onValueChange={setBusinessType} required>
+              <Select value={businessType} onValueChange={(value) => {
+                setBusinessType(value);
+                if (value !== "other") {
+                  setCustomBusinessType("");
+                }
+              }} required>
                 <SelectTrigger className="h-11 border-border bg-input-background">
                   <SelectValue placeholder="Select your business type" />
                 </SelectTrigger>
@@ -122,13 +128,43 @@ export function OnboardingDetailsScreen({ onNavigate }: OnboardingDetailsScreenP
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
+              
+              {businessType === "other" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-3"
+                >
+                  <Label htmlFor="customBusinessType">Please specify your business type</Label>
+                  <motion.div
+                    animate={{
+                      scale: focusedField === "customBusinessType" ? 1.01 : 1,
+                    }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Input
+                      id="customBusinessType"
+                      type="text"
+                      placeholder="Enter your business type"
+                      value={customBusinessType}
+                      onChange={(e) => setCustomBusinessType(e.target.value)}
+                      onFocus={() => setFocusedField("customBusinessType")}
+                      onBlur={() => setFocusedField(null)}
+                      className="h-11 border-border bg-input-background focus-visible:ring-2 focus-visible:ring-primary mt-2"
+                      required
+                    />
+                  </motion.div>
+                </motion.div>
+              )}
             </div>
 
             <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="pt-4">
               <Button
                 type="submit"
                 className="w-full h-11 bg-primary hover:bg-primary/90"
-                disabled={!fullName || !businessName || !businessType}
+                disabled={!fullName || !businessName || !businessType || (businessType === "other" && !customBusinessType)}
               >
                 Next
               </Button>

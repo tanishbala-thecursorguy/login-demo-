@@ -8,6 +8,9 @@ import { OnboardingUsageScreen } from "./components/screens/OnboardingUsageScree
 import { OnboardingEstimateScreen } from "./components/screens/OnboardingEstimateScreen";
 import { OnboardingFeaturesScreen } from "./components/screens/OnboardingFeaturesScreen";
 import { DashboardScreen } from "./components/screens/DashboardScreen";
+import { ForgotPasswordScreen } from "./components/screens/ForgotPasswordScreen";
+import { ForgotPasswordOTPScreen } from "./components/screens/ForgotPasswordOTPScreen";
+import { ResetPasswordScreen } from "./components/screens/ResetPasswordScreen";
 
 type Screen =
   | "login"
@@ -17,15 +20,22 @@ type Screen =
   | "onboarding-usage"
   | "onboarding-estimate"
   | "onboarding-features"
-  | "dashboard";
+  | "dashboard"
+  | "forgot-password"
+  | "forgot-password-otp"
+  | "reset-password";
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>("login");
   const [isNewUser, setIsNewUser] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
 
-  const handleNavigate = (screen: string, newUser?: boolean) => {
+  const handleNavigate = (screen: string, newUser?: boolean, email?: string) => {
     if (newUser !== undefined) {
       setIsNewUser(newUser);
+    }
+    if (email) {
+      setForgotPasswordEmail(email);
     }
     setCurrentScreen(screen as Screen);
   };
@@ -68,6 +78,22 @@ export default function App() {
         )}
         {currentScreen === "dashboard" && (
           <DashboardScreen key="dashboard" onNavigate={handleNavigate} />
+        )}
+        {currentScreen === "forgot-password" && (
+          <ForgotPasswordScreen 
+            key="forgot-password" 
+            onNavigate={(screen, email) => handleNavigate(screen, undefined, email)} 
+          />
+        )}
+        {currentScreen === "forgot-password-otp" && (
+          <ForgotPasswordOTPScreen 
+            key="forgot-password-otp" 
+            onNavigate={handleNavigate} 
+            email={forgotPasswordEmail}
+          />
+        )}
+        {currentScreen === "reset-password" && (
+          <ResetPasswordScreen key="reset-password" onNavigate={handleNavigate} />
         )}
       </AnimatePresence>
     </div>

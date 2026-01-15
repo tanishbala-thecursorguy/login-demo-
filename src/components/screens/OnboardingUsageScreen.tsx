@@ -1,20 +1,21 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { Logo } from "../Logo";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
-import { Input } from "../ui/input";
-import { Sparkles } from "lucide-react";
+import { Phone, Mail, MessageCircle, Search, Users } from "lucide-react";
 
 interface OnboardingUsageScreenProps {
   onNavigate: (screen: string) => void;
 }
 
 export function OnboardingUsageScreen({ onNavigate }: OnboardingUsageScreenProps) {
-  const [inboundUsage, setInboundUsage] = useState(500);
-  const [outboundUsage, setOutboundUsage] = useState(300);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [contacts, setContacts] = useState(1000);
+  const [dailyPhonePercentage, setDailyPhonePercentage] = useState(25);
+  const [dailyEmails, setDailyEmails] = useState(50);
+  const [dailyMessages, setDailyMessages] = useState(30);
+  const [marketResearchUsage, setMarketResearchUsage] = useState(5);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +42,7 @@ export function OnboardingUsageScreen({ onNavigate }: OnboardingUsageScreenProps
             </div>
             <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
               <motion.div
-                initial={{ width: "33%" }}
+                initial={{ width: 0 }}
                 animate={{ width: "66%" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="h-full bg-gradient-to-r from-primary to-accent"
@@ -50,97 +51,134 @@ export function OnboardingUsageScreen({ onNavigate }: OnboardingUsageScreenProps
           </div>
 
           <div className="mb-6">
-            <h1 className="text-2xl font-semibold mb-2">Estimate your usage</h1>
-            <p className="text-muted-foreground">Help us recommend the right plan for you</p>
+            <h1 className="text-2xl font-semibold mb-2">Tell us about your usage</h1>
+            <p className="text-muted-foreground">Help us understand how you'll use Lulu CRM</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-4">
-              <div className="flex items-start justify-between">
-                <Label htmlFor="inbound">Monthly inbound contacts</Label>
-                <Input
-                  id="inbound-input"
-                  type="number"
-                  value={inboundUsage}
-                  onChange={(e) => setInboundUsage(parseInt(e.target.value) || 0)}
-                  className="w-20 h-8 text-right px-2 border-border bg-input-background"
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Number of Contacts */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-primary" />
+                <Label htmlFor="contacts">Number of Contacts</Label>
+              </div>
+              <div className="px-2">
+                <Slider
+                  id="contacts"
                   min={0}
                   max={10000}
+                  step={100}
+                  value={[contacts]}
+                  onValueChange={(value) => setContacts(value[0])}
+                  className="w-full"
                 />
               </div>
-              <Slider
-                id="inbound"
-                value={[inboundUsage]}
-                onValueChange={(value) => setInboundUsage(value[0])}
-                max={10000}
-                step={50}
-                className="w-full"
-              />
-              <p className="text-xs text-muted-foreground">
-                Expected number of incoming calls, messages, and chats per month
-              </p>
+              <div className="text-center">
+                <span className="text-lg font-semibold text-primary">{contacts.toLocaleString()}</span>
+                <span className="text-sm text-muted-foreground ml-2"> contacts</span>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-start justify-between">
-                <Label htmlFor="outbound">Monthly outbound contacts</Label>
-                <Input
-                  id="outbound-input"
-                  type="number"
-                  value={outboundUsage}
-                  onChange={(e) => setOutboundUsage(parseInt(e.target.value) || 0)}
-                  className="w-20 h-8 text-right px-2 border-border bg-input-background"
+            {/* Daily Phone Connection Percentage */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-primary" />
+                <Label htmlFor="phonePercentage">
+                  % of contacts to connect daily over phone
+                </Label>
+              </div>
+              <div className="px-2">
+                <Slider
+                  id="phonePercentage"
                   min={0}
-                  max={10000}
+                  max={100}
+                  step={5}
+                  value={[dailyPhonePercentage]}
+                  onValueChange={(value) => setDailyPhonePercentage(value[0])}
+                  className="w-full"
                 />
               </div>
-              <Slider
-                id="outbound"
-                value={[outboundUsage]}
-                onValueChange={(value) => setOutboundUsage(value[0])}
-                max={10000}
-                step={50}
-                className="w-full"
-              />
-              <p className="text-xs text-muted-foreground">
-                Expected number of outgoing calls, messages, and campaigns per month
-              </p>
+              <div className="text-center">
+                <span className="text-lg font-semibold text-primary">{dailyPhonePercentage}%</span>
+                <span className="text-sm text-muted-foreground ml-2"> daily</span>
+              </div>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              className="relative bg-gradient-to-br from-accent/10 to-primary/10 border border-accent/20 rounded-xl p-4"
-            >
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-gradient-to-br from-accent to-primary rounded-lg">
-                  <Sparkles className="h-4 w-4 text-white" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium mb-1">AI Recommendation</p>
-                  <p className="text-xs text-muted-foreground">
-                    This helps us estimate your monthly credits and suggest the best plan
-                  </p>
-                </div>
+            {/* Daily Automated Emails */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary" />
+                <Label htmlFor="dailyEmails">Number of emails to automate daily</Label>
               </div>
-              
-              {showTooltip && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute -top-2 -right-2 bg-accent text-white text-xs px-3 py-1 rounded-full shadow-lg"
-                >
-                  AI-powered insights
-                </motion.div>
-              )}
-            </motion.div>
+              <div className="px-2">
+                <Slider
+                  id="dailyEmails"
+                  min={0}
+                  max={500}
+                  step={10}
+                  value={[dailyEmails]}
+                  onValueChange={(value) => setDailyEmails(value[0])}
+                  className="w-full"
+                />
+              </div>
+              <div className="text-center">
+                <span className="text-lg font-semibold text-primary">{dailyEmails}</span>
+                <span className="text-sm text-muted-foreground ml-2"> emails/day</span>
+              </div>
+            </div>
+
+            {/* Daily Automated Messages */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4 text-primary" />
+                <Label htmlFor="dailyMessages">Number of messages to automate daily</Label>
+              </div>
+              <div className="px-2">
+                <Slider
+                  id="dailyMessages"
+                  min={0}
+                  max={300}
+                  step={5}
+                  value={[dailyMessages]}
+                  onValueChange={(value) => setDailyMessages(value[0])}
+                  className="w-full"
+                />
+              </div>
+              <div className="text-center">
+                <span className="text-lg font-semibold text-primary">{dailyMessages}</span>
+                <span className="text-sm text-muted-foreground ml-2"> messages/day</span>
+              </div>
+            </div>
+
+            {/* Market Research Usage */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Search className="h-4 w-4 text-primary" />
+                <Label htmlFor="marketResearch">Lulu market research usage per week</Label>
+              </div>
+              <div className="px-2">
+                <Slider
+                  id="marketResearch"
+                  min={0}
+                  max={20}
+                  step={1}
+                  value={[marketResearchUsage]}
+                  onValueChange={(value) => setMarketResearchUsage(value[0])}
+                  className="w-full"
+                />
+              </div>
+              <div className="text-center">
+                <span className="text-lg font-semibold text-primary">{marketResearchUsage}</span>
+                <span className="text-sm text-muted-foreground ml-2"> times/week</span>
+              </div>
+            </div>
 
             <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="pt-4">
-              <Button type="submit" className="w-full h-11 bg-primary hover:bg-primary/90">
-                Get AI estimate
+              <Button
+                type="submit"
+                className="w-full h-11 bg-primary hover:bg-primary/90"
+              >
+                Calculate My Usage
               </Button>
             </motion.div>
           </form>

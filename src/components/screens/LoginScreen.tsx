@@ -1,9 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { Logo } from "../Logo";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Checkbox } from "../ui/checkbox";
 
 interface LoginScreenProps {
   onNavigate: (screen: string, newUser?: boolean) => void;
@@ -12,6 +13,7 @@ interface LoginScreenProps {
 export function LoginScreen({ onNavigate }: LoginScreenProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [stayLoggedIn, setStayLoggedIn] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -80,6 +82,26 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
                   required
                 />
               </motion.div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="stay-logged-in"
+                  checked={stayLoggedIn}
+                  onCheckedChange={(checked) => setStayLoggedIn(checked as boolean)}
+                />
+                <Label htmlFor="stay-logged-in" className="text-sm text-muted-foreground">
+                  Stay logged in
+                </Label>
+              </div>
+              <button
+                type="button"
+                onClick={() => onNavigate("forgot-password")}
+                className="text-sm text-primary hover:underline transition-colors"
+              >
+                Forgot password?
+              </button>
             </div>
 
             <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
